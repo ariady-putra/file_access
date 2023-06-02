@@ -43,5 +43,5 @@ file.copy_to(&another_path)?;
 file_path.as_file().delete()?;
 
 // rename a file:
-"another_path".as_file().rename_to(&"a_new_file_name")?;
+"another_path".as_file().rename_to(&"a_new_file_path")?;
 ```
