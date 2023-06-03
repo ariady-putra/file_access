@@ -36,7 +36,7 @@ fn mk_file<Path: AsRef<str>>(file_path: &Path) -> Result<File> {
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: &str = "Cargo.toml";
 ///         let file_path: String = String::from(file_path);
 ///
 ///         let text: String = file_access::read_string(&file_path)?;
@@ -60,7 +60,7 @@ pub fn read_string<Path: AsRef<str>>(file_path: &Path) -> Result<String> {
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: &str = "Cargo.toml";
 ///         let file_path: String = String::from(file_path);
 ///
 ///         let lines: Vec<String> = file_access::read_lines(&file_path)?;
@@ -88,13 +88,16 @@ pub fn read_lines<Path: AsRef<str>>(file_path: &Path) -> Result<Lines> {
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: &str = "write_to/absolute_or_relative.path";
 ///         let file_path: String = String::from(file_path);
 ///
 ///         let text: &str = "Hello, World!";
 ///         let text: String = String::from(text);
 ///
 ///         file_access::write_string(&file_path, &text)?;
+/// 
+///         // Clean-up:
+///         file_access::delete(&"write_to")?; // ./write_to/
 ///     })
 /// }
 /// ```
@@ -122,13 +125,16 @@ pub fn write_string<Path: AsRef<str>, Text: AsRef<str>>(
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: &str = "lines_to/absolute_or_relative.path";
 ///         let file_path: String = String::from(file_path);
 ///
 ///         let lines: Vec<&str> = "Hello, World!".split_whitespace().collect();
 ///         let lines: Vec<String> = lines.iter().map(ToString::to_string).collect();
 ///
 ///         file_access::write_lines(&file_path, &lines)?;
+/// 
+///         // Clean-up:
+///         file_access::delete(&"lines_to"); // ./lines_to/
 ///     })
 /// }
 /// ```
@@ -152,13 +158,16 @@ pub fn write_lines<Path: AsRef<str>, Line: AsRef<str>>(
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: &str = "append_to/absolute_or_relative.path";
 ///         let file_path: String = String::from(file_path);
 ///
 ///         let text: &str = "Hello, World!";
 ///         let text: String = String::from(text);
 ///
 ///         file_access::append_string(&file_path, &text)?;
+/// 
+///         // Clean-up:
+///         file_access::delete(&"append_to"); // ./append_to/
 ///     })
 /// }
 /// ```
@@ -188,13 +197,16 @@ pub fn append_string<Path: AsRef<str>, Text: AsRef<str>>(
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: &str = "append_lines_to/absolute_or_relative.path";
 ///         let file_path: String = String::from(file_path);
 ///
 ///         let lines: Vec<&str> = "Hello, World!".split_whitespace().collect();
 ///         let lines: Vec<String> = lines.iter().map(ToString::to_string).collect();
 ///
 ///         file_access::append_lines(&file_path, &lines)?;
+/// 
+///         // Clean-up:
+///         file_access::delete(&"append_lines_to"); // ./append_lines_to/
 ///     })
 /// }
 /// ```
@@ -223,10 +235,14 @@ pub fn append_lines<Path: AsRef<str>, Line: AsRef<str>>(
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         let file_path: &str = "absolute_or_relative_path/to_a_file/or_a_directory/";
+///         let file_path: &str = "absolute_or_relative_path/to_a_file/or_a_directory";
 ///         let file_path: String = String::from(file_path);
 ///
-///         file_access::delete(&file_path)?;
+///         file_access::write_string(&file_path, &"Hello, World!");
+///         file_access::delete(&file_path)?; // delete file
+/// 
+///         // Delete directory:
+///         file_access::delete(&"absolute_or_relative_path")?;
 ///     })
 /// }
 /// ```
@@ -257,7 +273,16 @@ pub fn delete<Path: AsRef<str>>(file_path: &Path) -> Result<()> {
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         file_access::copy(&"file.1", &"file.2")?;
+///         let source: &str = "Cargo.toml";
+///         let source: String = String::from(source);
+/// 
+///         let destination: &str = "Cargo.toml.2";
+///         let destination: String = String::from(destination);
+/// 
+///         file_access::copy(&source, &destination)?;
+/// 
+///         // Delete file:
+///         file_access::delete(&destination);
 ///     })
 /// }
 /// ```
@@ -278,7 +303,17 @@ pub fn copy<From: AsRef<str>, To: AsRef<str>>(from: &From, to: &To) -> Result<()
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         file_access::rename(&"file.1", &"file.2")?;
+///         let source: &str = "file.1";
+///         let source: String = String::from(source);
+/// 
+///         let destination: &str = "file.2";
+///         let destination: String = String::from(destination);
+/// 
+///         file_access::write_string(&source, &"Hello, World!")?;
+///         file_access::rename(&source, &destination)?;
+/// 
+///         // Clean-up:
+///         file_access::delete(&destination)?;
 ///     })
 /// }
 /// ```
@@ -297,7 +332,7 @@ pub fn rename<From: AsRef<str>, To: AsRef<str>>(from: &From, to: &To) -> Result<
 /// ```
 /// fn main() -> std::io::Result<()> {
 ///     Ok({
-///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: &str = "Cargo.toml";
 ///         let file_path: String = String::from(file_path);
 ///
 ///         let metadata: std::fs::Metadata = file_access::get_metadata(&file_path)?;

@@ -47,7 +47,7 @@ impl FilePath {
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "./relative.path";
+    ///         let file_path: &str = "./Cargo.toml";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
@@ -71,7 +71,7 @@ impl FilePath {
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "/absolute.path";
+    ///         let file_path: &str = "/home/ariady/rust/file_access/Cargo.toml";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
@@ -101,7 +101,7 @@ impl FilePath {
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "absolute/or/relative.path";
+    ///         let file_path: &str = "Cargo.toml";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
@@ -122,10 +122,10 @@ impl FilePath {
     /// # Examples
     /// ```
     /// use file_access::file_path::*;
-    /// 
+    ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "absolute/or/relative.path";
+    ///         let file_path: &str = "Cargo.toml";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
@@ -149,10 +149,10 @@ impl FilePath {
     /// # Examples
     /// ```
     /// use file_access::file_path::*;
-    /// 
+    ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "absolute/or/relative.path";
+    ///         let file_path: &str = "fp_write/absolute_or_relative.path";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let text: &str = "Hello, World!";
@@ -160,6 +160,10 @@ impl FilePath {
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
     ///         file.write_string(&text)?;
+    ///
+    ///         // Clean-up:
+    ///         let file = FilePath::access(&"fp_write"); // ./fp_write/
+    ///         file.delete()?;
     ///     })
     /// }
     /// ```
@@ -178,10 +182,10 @@ impl FilePath {
     /// # Examples
     /// ```
     /// use file_access::file_path::*;
-    /// 
+    ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "absolute/or/relative.path";
+    ///         let file_path: &str = "fp_lines/absolute_or_relative.path";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let lines: Vec<&str> = "Hello, World!".split_whitespace().collect();
@@ -189,6 +193,10 @@ impl FilePath {
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
     ///         file.write_lines(&lines)?;
+    ///
+    ///         // Clean-up:
+    ///         let file = FilePath::access(&"fp_lines"); // ./fp_lines/
+    ///         file.delete()?;
     ///     })
     /// }
     /// ```
@@ -207,10 +215,10 @@ impl FilePath {
     /// # Examples
     /// ```
     /// use file_access::file_path::*;
-    /// 
+    ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "absolute/or/relative.path";
+    ///         let file_path: &str = "fp_append/absolute_or_relative.path";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let text: &str = "Hello, World!";
@@ -218,6 +226,10 @@ impl FilePath {
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
     ///         file.append_string(&text)?;
+    /// 
+    ///         // Clean-up:
+    ///         let file = FilePath::access(&"fp_append"); // ./fp_append/
+    ///         file.delete()?;
     ///     })
     /// }
     /// ```
@@ -236,10 +248,10 @@ impl FilePath {
     /// # Examples
     /// ```
     /// use file_access::file_path::*;
-    /// 
+    ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "absolute/or/relative.path";
+    ///         let file_path: &str = "fp_append_lines/absolute_or_relative.path";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let lines: Vec<&str> = "Hello, World!".split_whitespace().collect();
@@ -247,6 +259,10 @@ impl FilePath {
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
     ///         file.append_lines(&lines)?;
+    /// 
+    ///         // Clean-up:
+    ///         let file = FilePath::access(&"fp_append_lines"); // ./fp_append_lines/
+    ///         file.delete()?;
     ///     })
     /// }
     /// ```
@@ -262,14 +278,19 @@ impl FilePath {
     /// # Examples
     /// ```
     /// use file_access::file_path::*;
-    /// 
+    ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "absolute_or_relative_path/to_a_file/or_a_directory/";
+    ///         let file_path: &str = "absolute_or_relative_path/to_a_file/or_a_directory";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
-    ///         file.delete()?;
+    ///         file.write_string(&"Hello, World!");
+    ///         file.delete()?; // delete file
+    ///
+    ///         // Delete directory:
+    ///         let dir = FilePath::access(&"absolute_or_relative_path");
+    ///         dir.delete()?;
     ///     })
     /// }
     /// ```
@@ -288,11 +309,21 @@ impl FilePath {
     /// # Examples
     /// ```
     /// use file_access::file_path::*;
-    /// 
+    ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file: FilePath = FilePath::access(&"file.1");
-    ///         file.copy_to(&"file.2")?;
+    ///         let source: &str = "Cargo.toml";
+    ///         let source: String = String::from(source);
+    ///
+    ///         let destination: &str = "Cargo.toml.2";
+    ///         let destination: String = String::from(destination);
+    ///
+    ///         let file: FilePath = FilePath::access(&source);
+    ///         file.copy_to(&destination)?;
+    ///
+    ///         // Delete file:
+    ///         let destination = FilePath::access(&destination);
+    ///         destination.delete()?;
     ///     })
     /// }
     /// ```
@@ -311,11 +342,22 @@ impl FilePath {
     /// # Examples
     /// ```
     /// use file_access::file_path::*;
-    /// 
+    ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file: FilePath = FilePath::access(&"file.1");
-    ///         file.rename_to(&"file.2")?;
+    ///         let source: &str = "file.1";
+    ///         let source: String = String::from(source);
+    ///
+    ///         let destination: &str = "file.2";
+    ///         let destination: String = String::from(destination);
+    ///
+    ///         let file: FilePath = FilePath::access(&source);
+    ///         file.write_string(&"Hello, World!")?;
+    ///         file.rename_to(&destination)?;
+    ///
+    ///         // Clean-up:
+    ///         let file = FilePath::access(&destination);
+    ///         file.delete()?;
     ///     })
     /// }
     /// ```
@@ -331,10 +373,10 @@ impl FilePath {
     /// # Examples
     /// ```
     /// use file_access::file_path::*;
-    /// 
+    ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
-    ///         let file_path: &str = "absolute/or/relative.path";
+    ///         let file_path: &str = "Cargo.toml";
     ///         let file_path: String = String::from(file_path);
     ///
     ///         let file: FilePath = FilePath::access(&file_path);

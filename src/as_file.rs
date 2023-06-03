@@ -6,6 +6,24 @@ pub trait AsFile {
 
 impl<Path: AsRef<str>> AsFile for Path {
     /// Converts an `AsRef<str>`, such as `String` or `&str`, into a `FilePath`.
+    ///
+    /// # Examples
+    /// ```
+    /// use file_access::as_file::*;
+    ///
+    /// fn main() -> std::io::Result<()> {
+    ///     Ok({
+    ///         "as_file.1".as_file().write_string(&"Hello, World!")?;
+    ///
+    ///         let file = "as_file.1".as_file();
+    ///         file.append_lines(&vec!["hello", "world"])?;
+    ///         file.copy_to(&"as_file.2")?; // copies ./as_file.1 to ./as_file.2
+    ///
+    ///         "as_file.2".as_file().rename_to(&"as_file.1")?; // replace
+    ///         "as_file.1".as_file().delete()?; // clean-up
+    ///     })
+    /// }
+    /// ```
     fn as_file(&self) -> FilePath {
         FilePath::access(self)
     }
