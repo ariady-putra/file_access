@@ -9,7 +9,7 @@ impl<Path: AsRef<str>> AsFile for Path {
     ///
     /// # Examples
     /// ```
-    /// use file_access::as_file::*;
+    /// use file_access::AsFile;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({

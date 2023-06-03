@@ -14,11 +14,11 @@ impl FilePath {
     /// Wraps a **borrowed** `AsRef<str>`, such as `String` or `&str`, into a `FilePath`.
     ///
     /// # Returns
-    /// file_access::file_path::`FilePath`
+    /// file_access::`FilePath`
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -43,7 +43,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -67,7 +67,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -97,7 +97,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -121,7 +121,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -149,7 +149,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -183,7 +183,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -217,7 +217,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -251,7 +251,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -281,7 +281,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -313,7 +313,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -347,7 +347,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
@@ -378,7 +378,7 @@ impl FilePath {
     ///
     /// # Examples
     /// ```
-    /// use file_access::file_path::*;
+    /// use file_access::FilePath;
     ///
     /// fn main() -> std::io::Result<()> {
     ///     Ok({
