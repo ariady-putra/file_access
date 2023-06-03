@@ -1,3 +1,33 @@
+//! This crate is a collection of utilities to make performing certain
+//! file manipulations more convenient.
+//!
+//! # Examples
+//! ```
+//! use file_access::as_file::*;
+//!
+//! fn main() -> std::io::Result<()> {
+//!     Ok({
+//!         let text = "Cargo.toml".as_file().read_string()?;
+//!         println!("{}", text);
+//!
+//!         "Cargo.toml".as_file().read_lines()?
+//!             .iter()
+//!             .for_each(|line| {
+//!                 println!("{}", line);
+//!             });
+//!
+//!         "file.1".as_file().write_string(&"Hello, World!")?;
+//!
+//!         let file = "file.1".as_file();
+//!         file.append_lines(&vec!["hello", "world"])?;
+//!         file.copy_to(&"file.2")?; // copies ./file.1 to ./file.2
+//!
+//!         "file.2".as_file().rename_to(&"file.1")?; // replace
+//!         "file.1".as_file().delete()?; // clean-up
+//!     })
+//! }
+//! ```
+
 use internal::{traits::to_vec_string::*, types::*};
 use std::{
     fs::{self, File, Metadata},
@@ -75,7 +105,8 @@ pub fn read_lines<Path: AsRef<str>>(file_path: &Path) -> Result<Lines> {
         .collect())
 }
 
-/// Writes text to a file. This function will create the file **and its full directory path** if they don't exist, and will entirely replace the contents.
+/// Writes text to a file. This function will create the file **and its full directory path** if they don't exist,
+/// and will entirely replace the contents.
 ///
 /// # Parameters
 /// - `file_path`: **borrowed** `AsRef<str>` such as `String` or `&str`
@@ -95,7 +126,7 @@ pub fn read_lines<Path: AsRef<str>>(file_path: &Path) -> Result<Lines> {
 ///         let text: String = String::from(text);
 ///
 ///         file_access::write_string(&file_path, &text)?;
-/// 
+///
 ///         // Clean-up:
 ///         file_access::delete(&"write_to")?; // ./write_to/
 ///     })
@@ -112,7 +143,8 @@ pub fn write_string<Path: AsRef<str>, Text: AsRef<str>>(
     return fs::write(path, text.as_ref());
 }
 
-/// Writes a list of text as lines to a file. This function will create the file **and its full directory path** if they don't exist, and will entirely replace the contents with the provided strings each on its own line.
+/// Writes a list of text as lines to a file. This function will create the file **and its full directory path** if they don't exist,
+/// and will entirely replace the contents with the provided strings each on its own line.
 ///
 /// # Parameters
 /// - `file_path`: **borrowed** `AsRef<str>` such as `String` or `&str`
@@ -132,7 +164,7 @@ pub fn write_string<Path: AsRef<str>, Text: AsRef<str>>(
 ///         let lines: Vec<String> = lines.iter().map(ToString::to_string).collect();
 ///
 ///         file_access::write_lines(&file_path, &lines)?;
-/// 
+///
 ///         // Clean-up:
 ///         file_access::delete(&"lines_to"); // ./lines_to/
 ///     })
@@ -145,7 +177,8 @@ pub fn write_lines<Path: AsRef<str>, Line: AsRef<str>>(
     write_string(file_path, &lines.to_vec_string().join("\n"))
 }
 
-/// Appends text to a file. This function will append the contents of the file, or write a new one **and its full directory path** if they don't exist yet.
+/// Appends text to a file. This function will append the contents of the file,
+/// or write a new one **and its full directory path** if they don't exist yet.
 ///
 /// # Parameters
 /// - `file_path`: **borrowed** `AsRef<str>` such as `String` or `&str`
@@ -165,7 +198,7 @@ pub fn write_lines<Path: AsRef<str>, Line: AsRef<str>>(
 ///         let text: String = String::from(text);
 ///
 ///         file_access::append_string(&file_path, &text)?;
-/// 
+///
 ///         // Clean-up:
 ///         file_access::delete(&"append_to"); // ./append_to/
 ///     })
@@ -184,7 +217,8 @@ pub fn append_string<Path: AsRef<str>, Text: AsRef<str>>(
     )
 }
 
-/// Appends a list of text as lines to a file. This function will append the contents of the file, or write a new one **and its full directory path** if they don't exist yet.
+/// Appends a list of text as lines to a file. This function will append the contents of the file,
+/// or write a new one **and its full directory path** if they don't exist yet.
 ///
 /// # Parameters
 /// - `file_path`: **borrowed** `AsRef<str>` such as `String` or `&str`
@@ -204,7 +238,7 @@ pub fn append_string<Path: AsRef<str>, Text: AsRef<str>>(
 ///         let lines: Vec<String> = lines.iter().map(ToString::to_string).collect();
 ///
 ///         file_access::append_lines(&file_path, &lines)?;
-/// 
+///
 ///         // Clean-up:
 ///         file_access::delete(&"append_lines_to"); // ./append_lines_to/
 ///     })
@@ -240,7 +274,7 @@ pub fn append_lines<Path: AsRef<str>, Line: AsRef<str>>(
 ///
 ///         file_access::write_string(&file_path, &"Hello, World!");
 ///         file_access::delete(&file_path)?; // delete file
-/// 
+///
 ///         // Delete directory:
 ///         file_access::delete(&"absolute_or_relative_path")?;
 ///     })
@@ -260,7 +294,8 @@ pub fn delete<Path: AsRef<str>>(file_path: &Path) -> Result<()> {
     return Err(Error::new(ErrorKind::InvalidInput, file_path.as_ref()));
 }
 
-/// Copies the contents of a file and write it to a destination. This function will entirely replace the contents of the destination if it already exists.
+/// Copies the contents of a file and write it to a destination.
+/// This function will entirely replace the contents of the destination if it already exists.
 ///
 /// # Parameters
 /// - `from`: **borrowed** `AsRef<str>` such as `String` or `&str`
@@ -275,12 +310,12 @@ pub fn delete<Path: AsRef<str>>(file_path: &Path) -> Result<()> {
 ///     Ok({
 ///         let source: &str = "Cargo.toml";
 ///         let source: String = String::from(source);
-/// 
+///
 ///         let destination: &str = "Cargo.toml.2";
 ///         let destination: String = String::from(destination);
-/// 
+///
 ///         file_access::copy(&source, &destination)?;
-/// 
+///
 ///         // Delete file:
 ///         file_access::delete(&destination);
 ///     })
@@ -290,7 +325,8 @@ pub fn copy<From: AsRef<str>, To: AsRef<str>>(from: &From, to: &To) -> Result<()
     write_string(to, &read_string(from)?)
 }
 
-/// Copies the contents of a file, writes it to a destination and then deletes the source. This function will entirely replace the contents of the destination if it already exists.
+/// Copies the contents of a file, writes it to a destination and then deletes the source.
+/// This function will entirely replace the contents of the destination if it already exists.
 ///
 /// # Parameters
 /// - `from`: **borrowed** `AsRef<str>` such as `String` or `&str`
@@ -305,13 +341,13 @@ pub fn copy<From: AsRef<str>, To: AsRef<str>>(from: &From, to: &To) -> Result<()
 ///     Ok({
 ///         let source: &str = "file.1";
 ///         let source: String = String::from(source);
-/// 
+///
 ///         let destination: &str = "file.2";
 ///         let destination: String = String::from(destination);
-/// 
+///
 ///         file_access::write_string(&source, &"Hello, World!")?;
 ///         file_access::rename(&source, &destination)?;
-/// 
+///
 ///         // Clean-up:
 ///         file_access::delete(&destination)?;
 ///     })

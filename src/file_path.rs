@@ -138,7 +138,8 @@ impl FilePath {
         read_lines(self)
     }
 
-    /// Writes text to a file. This function will create the file **and its full directory path** if they don't exist, and will entirely replace the contents.
+    /// Writes text to a file. This function will create the file **and its full directory path** if they don't exist,
+    /// and will entirely replace the contents.
     ///
     /// # Parameters
     /// - `text`: **borrowed** `AsRef<str>` such as `String` or `&str`
@@ -171,7 +172,8 @@ impl FilePath {
         write_string(self, text)
     }
 
-    /// Writes a list of text as lines to a file. This function will create the file **and its full directory path** if they don't exist, and will entirely replace the contents with the provided strings each on its own line.
+    /// Writes a list of text as lines to a file. This function will create the file **and its full directory path** if they don't exist,
+    /// and will entirely replace the contents with the provided strings each on its own line.
     ///
     /// # Parameters
     /// - `lines`: **borrowed** `Vec<AsRef<str>>` such as `Vec<String>` or `Vec<&str>`
@@ -204,7 +206,8 @@ impl FilePath {
         write_lines(self, lines)
     }
 
-    /// Appends text to a file. This function will append the contents of the file, or write a new one **and its full directory path** if they don't exist yet.
+    /// Appends text to a file. This function will append the contents of the file,
+    /// or write a new one **and its full directory path** if they don't exist yet.
     ///
     /// # Parameters
     /// - `text`: **borrowed** `AsRef<str>` such as `String` or `&str`
@@ -237,7 +240,8 @@ impl FilePath {
         append_string(self, text)
     }
 
-    /// Appends a list of text as lines to a file. This function will append the contents of the file, or write a new one **and its full directory path** if they don't exist yet.
+    /// Appends a list of text as lines to a file. This function will append the contents of the file,
+    /// or write a new one **and its full directory path** if they don't exist yet.
     ///
     /// # Parameters
     /// - `lines`: **borrowed** `Vec<AsRef<str>>` such as `Vec<String>` or `Vec<&str>`
@@ -298,7 +302,8 @@ impl FilePath {
         delete(self)
     }
 
-    /// Copies the contents of a file and write it to a destination. This function will entirely replace the contents of the destination if it already exists.
+    /// Copies the contents of a file and write it to a destination.
+    /// This function will entirely replace the contents of the destination if it already exists.
     ///
     /// # Parameters
     /// - `to`: **borrowed** `AsRef<str>` such as `String` or `&str`
@@ -331,7 +336,8 @@ impl FilePath {
         copy(self, to)
     }
 
-    /// Copies the contents of a file, writes it to a destination and then deletes the source. This function will entirely replace the contents of the destination if it already exists.
+    /// Copies the contents of a file, writes it to a destination and then deletes the source.
+    /// This function will entirely replace the contents of the destination if it already exists.
     ///
     /// # Parameters
     /// - `to`: **borrowed** `AsRef<str>` such as `String` or `&str`
