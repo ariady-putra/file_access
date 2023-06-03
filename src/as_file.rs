@@ -1,4 +1,4 @@
-use crate::file_path::*;
+use crate::*;
 
 pub trait AsFile {
     fn as_file(&self) -> FilePath;

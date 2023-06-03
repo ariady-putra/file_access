@@ -229,7 +229,7 @@ impl FilePath {
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
     ///         file.append_string(&text)?;
-    /// 
+    ///
     ///         // Clean-up:
     ///         let file = FilePath::access(&"fp_append"); // ./fp_append/
     ///         file.delete()?;
@@ -263,7 +263,7 @@ impl FilePath {
     ///
     ///         let file: FilePath = FilePath::access(&file_path);
     ///         file.append_lines(&lines)?;
-    /// 
+    ///
     ///         // Clean-up:
     ///         let file = FilePath::access(&"fp_append_lines"); // ./fp_append_lines/
     ///         file.delete()?;
@@ -405,7 +405,6 @@ impl AsRef<str> for FilePath {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::as_file::*;
     use std::io::Result;
 
     // cargo test -- --show-output --test-threads=1

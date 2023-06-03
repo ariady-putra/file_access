@@ -28,6 +28,8 @@
 //! }
 //! ```
 
+pub use as_file::*; // re-export AsFile
+pub use file_path::*; // re-export FilePath
 use internal::{traits::to_vec_string::*, types::*};
 use std::{
     fs::{self, File, Metadata},
