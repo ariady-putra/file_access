@@ -9,21 +9,41 @@ pub mod as_file;
 pub mod file_path;
 mod internal;
 
-fn get_file(file_path: &impl AsRef<str>) -> Result<File> {
+// Gets a File::open handle from AsRef<str> such as String or &str
+fn get_file<Path: AsRef<str>>(file_path: &Path) -> Result<File> {
     File::open(file_path.as_ref())
 }
 
-fn path_of(file_path: &impl AsRef<str>) -> PathBuf {
+// Converts AsRef<str> such as String or &str to PathBuf
+fn path_of<Path: AsRef<str>>(file_path: &Path) -> PathBuf {
     PathBuf::from(file_path.as_ref())
 }
 
-fn mk_file(file_path: &impl AsRef<str>) -> Result<File> {
+// Creates a file and its full directory path if they don't exist
+fn mk_file<Path: AsRef<str>>(file_path: &Path) -> Result<File> {
     if let Some(path) = path_of(file_path).parent() {
         fs::create_dir_all(path)?;
     }
     return File::create(file_path.as_ref());
 }
 
+/// Reads the contents of a file.
+///
+/// # Returns
+/// Result<`String`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: String = String::from(file_path);
+///
+///         let text: String = file_access::read_string(&file_path)?;
+///         println!("{}", text);
+///     })
+/// }
+/// ```
 pub fn read_string<Path: AsRef<str>>(file_path: &Path) -> Result<String> {
     let mut buf = String::new();
     get_file(file_path)?.read_to_string(&mut buf)?;
@@ -31,6 +51,23 @@ pub fn read_string<Path: AsRef<str>>(file_path: &Path) -> Result<String> {
     return Ok(buf);
 }
 
+/// Reads the contents of a file and returns it as lines.
+///
+/// # Returns
+/// Result<`Vec<String>`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: String = String::from(file_path);
+///
+///         let lines: Vec<String> = file_access::read_lines(&file_path)?;
+///         lines.iter().for_each(|line| println!("{}", line));
+///     })
+/// }
+/// ```
 pub fn read_lines<Path: AsRef<str>>(file_path: &Path) -> Result<Lines> {
     Ok(read_string(file_path)?
         .lines()
@@ -38,6 +75,29 @@ pub fn read_lines<Path: AsRef<str>>(file_path: &Path) -> Result<Lines> {
         .collect())
 }
 
+/// Writes text to a file. This function will create the file **and its full directory path** if they don't exist, and will entirely replace the contents.
+///
+/// # Parameters
+/// - `file_path`: **borrowed** `AsRef<str>` such as `String` or `&str`
+/// - `text`: **borrowed** `AsRef<str>` such as `String` or `&str`
+///
+/// # Returns
+/// Result<`()`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: String = String::from(file_path);
+///
+///         let text: &str = "Hello, World!";
+///         let text: String = String::from(text);
+///
+///         file_access::write_string(&file_path, &text)?;
+///     })
+/// }
+/// ```
 pub fn write_string<Path: AsRef<str>, Text: AsRef<str>>(
     file_path: &Path,
     text: &Text,
@@ -49,6 +109,29 @@ pub fn write_string<Path: AsRef<str>, Text: AsRef<str>>(
     return fs::write(path, text.as_ref());
 }
 
+/// Writes a list of text as lines to a file. This function will create the file **and its full directory path** if they don't exist, and will entirely replace the contents with the provided strings each on its own line.
+///
+/// # Parameters
+/// - `file_path`: **borrowed** `AsRef<str>` such as `String` or `&str`
+/// - `lines`: **borrowed** `Vec<AsRef<str>>` such as `Vec<String>` or `Vec<&str>`
+///
+/// # Returns
+/// Result<`()`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: String = String::from(file_path);
+///
+///         let lines: Vec<&str> = "Hello, World!".split_whitespace().collect();
+///         let lines: Vec<String> = lines.iter().map(ToString::to_string).collect();
+///
+///         file_access::write_lines(&file_path, &lines)?;
+///     })
+/// }
+/// ```
 pub fn write_lines<Path: AsRef<str>, Line: AsRef<str>>(
     file_path: &Path,
     lines: &Vec<Line>,
@@ -56,26 +139,97 @@ pub fn write_lines<Path: AsRef<str>, Line: AsRef<str>>(
     write_string(file_path, &lines.to_vec_string().join("\n"))
 }
 
+/// Appends text to a file. This function will append the contents of the file, or write a new one **and its full directory path** if they don't exist yet.
+///
+/// # Parameters
+/// - `file_path`: **borrowed** `AsRef<str>` such as `String` or `&str`
+/// - `text`: **borrowed** `AsRef<str>` such as `String` or `&str`
+///
+/// # Returns
+/// Result<`()`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: String = String::from(file_path);
+///
+///         let text: &str = "Hello, World!";
+///         let text: String = String::from(text);
+///
+///         file_access::append_string(&file_path, &text)?;
+///     })
+/// }
+/// ```
 pub fn append_string<Path: AsRef<str>, Text: AsRef<str>>(
     file_path: &Path,
     text: &Text,
 ) -> Result<()> {
     write_string(
         file_path,
-        &format!("{}{}", read_string(file_path)?, text.as_ref()),
+        &match read_string(file_path) {
+            Ok(file) => format!("{}{}", file, text.as_ref()),
+            Err(_) => text.as_ref().to_string(),
+        },
     )
 }
 
+/// Appends a list of text as lines to a file. This function will append the contents of the file, or write a new one **and its full directory path** if they don't exist yet.
+///
+/// # Parameters
+/// - `file_path`: **borrowed** `AsRef<str>` such as `String` or `&str`
+/// - `lines`: **borrowed** `Vec<AsRef<str>>` such as `Vec<String>` or `Vec<&str>`
+///
+/// # Returns
+/// Result<`()`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: String = String::from(file_path);
+///
+///         let lines: Vec<&str> = "Hello, World!".split_whitespace().collect();
+///         let lines: Vec<String> = lines.iter().map(ToString::to_string).collect();
+///
+///         file_access::append_lines(&file_path, &lines)?;
+///     })
+/// }
+/// ```
 pub fn append_lines<Path: AsRef<str>, Line: AsRef<str>>(
     file_path: &Path,
     lines: &Vec<Line>,
 ) -> Result<()> {
-    let mut file = read_lines(file_path)?;
+    let mut file = match read_lines(file_path) {
+        Ok(lines) => lines,
+        Err(_) => vec![],
+    };
     file.extend_from_slice(&lines.to_vec_string());
 
     return write_lines(file_path, &file);
 }
 
+/// Deletes a file, or a directory **recursively**.
+///
+/// # Parameters
+/// - `file_path`: **borrowed** `AsRef<str>` such as `String` or `&str`
+///
+/// # Returns
+/// Result<`()`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         let file_path: &str = "absolute_or_relative_path/to_a_file/or_a_directory/";
+///         let file_path: String = String::from(file_path);
+///
+///         file_access::delete(&file_path)?;
+///     })
+/// }
+/// ```
 pub fn delete<Path: AsRef<str>>(file_path: &Path) -> Result<()> {
     let path = path_of(file_path);
 
@@ -90,16 +244,67 @@ pub fn delete<Path: AsRef<str>>(file_path: &Path) -> Result<()> {
     return Err(Error::new(ErrorKind::InvalidInput, file_path.as_ref()));
 }
 
+/// Copies the contents of a file and write it to a destination. This function will entirely replace the contents of the destination if it already exists.
+///
+/// # Parameters
+/// - `from`: **borrowed** `AsRef<str>` such as `String` or `&str`
+/// - `to`: **borrowed** `AsRef<str>` such as `String` or `&str`
+///
+/// # Returns
+/// Result<`()`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         file_access::copy(&"file.1", &"file.2")?;
+///     })
+/// }
+/// ```
 pub fn copy<From: AsRef<str>, To: AsRef<str>>(from: &From, to: &To) -> Result<()> {
     write_string(to, &read_string(from)?)
 }
 
+/// Copies the contents of a file, writes it to a destination and then deletes the source. This function will entirely replace the contents of the destination if it already exists.
+///
+/// # Parameters
+/// - `from`: **borrowed** `AsRef<str>` such as `String` or `&str`
+/// - `to`: **borrowed** `AsRef<str>` such as `String` or `&str`
+///
+/// # Returns
+/// Result<`()`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         file_access::rename(&"file.1", &"file.2")?;
+///     })
+/// }
+/// ```
 pub fn rename<From: AsRef<str>, To: AsRef<str>>(from: &From, to: &To) -> Result<()> {
     copy(from, to)?;
 
     return delete(from);
 }
 
+/// Queries metadata about the underlying file.
+///
+/// # Returns
+/// Result<`Metadata`>
+///
+/// # Examples
+/// ```
+/// fn main() -> std::io::Result<()> {
+///     Ok({
+///         let file_path: &str = "absolute/or/relative.path";
+///         let file_path: String = String::from(file_path);
+///
+///         let metadata: std::fs::Metadata = file_access::get_metadata(&file_path)?;
+///         println!("{:#?}", metadata);
+///     })
+/// }
+/// ```
 pub fn get_metadata<Path: AsRef<str>>(file_path: &Path) -> Result<Metadata> {
     get_file(file_path)?.metadata()
 }

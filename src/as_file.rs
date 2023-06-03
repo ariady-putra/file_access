@@ -5,6 +5,7 @@ pub trait AsFile {
 }
 
 impl<Path: AsRef<str>> AsFile for Path {
+    /// Converts an `AsRef<str>`, such as `String` or `&str`, into a `FilePath`.
     fn as_file(&self) -> FilePath {
         FilePath::access(self)
     }
