@@ -1,5 +1,5 @@
 # Rust File Access Wrapper Lib
-This lib-proj is mainly for me to experiment with various Rust concepts.
+A file_access wrapper-lib containing the `AsFile` trait to make performing certain file manipulations more convenient.
 
 ## Exposed Actions
 - `read_string`: Returns `String`.
