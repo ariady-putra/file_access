@@ -1,5 +1,12 @@
 # Rust File Access Wrapper Lib
 A file_access wrapper-lib containing the `AsFile` trait to make performing certain file manipulations more convenient.
+```rust
+let text = "strpath".as_file().read_string()?;
+println!("{text}");
+
+"file.1".as_file().copy_to(&"file.2")?;
+"file.2".as_file().rename_to(&"file.3")?;
+```
 
 ## Exposed Actions
 - `read_string`: Returns `String`.
@@ -18,7 +25,7 @@ There are 3 ways to use this library:
 - By using a FilePath handle: `let file = FilePath::access(&file_path); let result = file.METHOD_NAME(&..)?`
 - By using the AsFile trait: `let file = "string_path".as_file(); let result = file.METHOD_NAME(&..)?`
 
-where `file_path` can be a **borrowed** `String`, `&str`, or `file_access::file_path::FilePath`.
+where `file_path` can be a **borrowed** `String`, `&str`, or `file_access::FilePath`.
 
 ### Examples
 - Call `read_string` directly:
